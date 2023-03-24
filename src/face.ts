@@ -32,6 +32,8 @@ export default function Face({ id, state }: Props) {
           rotation: new Vector3(0, 0, 0),
           color,
           size: faceSizeOffset,
+          i,
+          j,
         }).elements[0]
       );
     }

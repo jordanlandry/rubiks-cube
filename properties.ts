@@ -21,7 +21,7 @@ const properties = {
 
   initialCameraPosition: { x: 0, y: 0, z: 7 },
 
-  animationSpeed: 150, // ms
+  animationSpeed: 10, // ms
 };
 
 // 3D array representing the cube state
@@ -63,7 +63,7 @@ export const INITIAL_CUBE_STATE = {
   ],
 } as Cube;
 
-type Side = "bottom" | "top" | "front" | "right" | "left" | "back";
+export type Side = "bottom" | "top" | "front" | "right" | "left" | "back";
 
 export const validTurns = ["u", "d", "l", "r", "f", "b"] as const;
 
@@ -74,5 +74,15 @@ export type Move = {
 };
 
 export type Cube = { [key in Side]: number[][] };
+
+// Taking the colors and getting the corrosponding side it should be on
+export const colorToSideMap = {
+  0: "bottom",
+  1: "top",
+  2: "front",
+  3: "right",
+  4: "left",
+  5: "back",
+} as { [key: number]: Side };
 
 export default properties;

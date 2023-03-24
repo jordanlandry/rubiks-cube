@@ -4,7 +4,9 @@ import { case1 } from "./algs/cfop/oll";
 import { jperm, testPerm, tperm } from "./algs/cfop/pll";
 import Face from "./face";
 import scramble from "./functions/scramble";
+import solve from "./functions/solve";
 import turn from "./functions/turn";
+import { f, l, u } from "./helpers/getMoves";
 import interpretMoves from "./helpers/interpretMoves";
 import { sleep } from "./helpers/sleep";
 import { scene } from "./main";
@@ -48,13 +50,26 @@ export default function Cube() {
   }
 
   async function handleKeyDown(e: KeyboardEvent) {
-    // const a = scramble();
-
     if (e.key === " ") {
-      const scrambleSequence = interpretMoves(jperm);
+      const scrambleSequence = scramble();
+
+      console.log(scrambleSequence);
 
       for (let i = 0; i < scrambleSequence.length; i++) {
         const { move, inverted } = scrambleSequence[i];
+        await turn(cubeState, move, inverted);
+
+        updateElements();
+
+        await sleep(properties.animationSpeed);
+      }
+    }
+
+    if (e.key === "Enter") {
+      const solveSequence = interpretMoves(await solve(cubeState));
+
+      for (let i = 0; i < solveSequence.length; i++) {
+        const { move, inverted } = solveSequence[i];
         await turn(cubeState, move, inverted);
 
         updateElements();

@@ -28,7 +28,7 @@ function App() {
 
 // Sets up THREEjs and starts the animation loop
 function run() {
-  // Add the elements to the scenee
+  // Add the elements to the scene
   const animationLoop = [] as Func[];
   addElementsToScene(scene, threeElements, animationLoop);
 
