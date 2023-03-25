@@ -1,12 +1,9 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
-import properties, { INITIAL_CUBE_STATE, Turn } from "../properties";
-import { case1 } from "./algs/cfop/oll";
-import { jperm, testPerm, tperm } from "./algs/cfop/pll";
+import properties, { INITIAL_CUBE_STATE } from "../properties";
 import Face from "./face";
 import scramble from "./functions/scramble";
 import solve from "./functions/solve";
 import turn from "./functions/turn";
-import { f, l, u } from "./helpers/getMoves";
 import interpretMoves from "./helpers/interpretMoves";
 import { sleep } from "./helpers/sleep";
 import { scene } from "./main";
@@ -52,8 +49,6 @@ export default function Cube() {
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === " ") {
       const scrambleSequence = scramble();
-
-      console.log(scrambleSequence);
 
       for (let i = 0; i < scrambleSequence.length; i++) {
         const { move, inverted } = scrambleSequence[i];

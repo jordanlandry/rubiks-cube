@@ -1,9 +1,9 @@
 // Picture this as if white was on the top
 // Since the position of the cube can be messed up during each step, we need to make sure that the cube is in the updated state
 
-import properties, { colorToSideMap, Cube } from "../../properties";
-import { b, b2, bp, d, d2, dp, f, f2, fp, l, l2, lp, r, r2, rp, u, u2, up } from "../helpers/getMoves";
-import { getCorrespondingEdgePiece, isCorner } from "./solve";
+import properties, { colorToSideMap, Cube } from "../../../properties";
+import { b, b2, bp, d, d2, dp, f, f2, fp, l, l2, lp, r, r2, rp, u, u2, up } from "../../helpers/getMoves";
+import { getCorrespondingEdgePiece, isCorner } from "../../functions/solve";
 
 export function whiteCrossSolved(cube: Cube) {
   // Check if the white cross is solved
@@ -11,8 +11,6 @@ export function whiteCrossSolved(cube: Cube) {
 
   const { colors } = properties;
   const whiteSide = colors.findIndex((color) => color.name === "white");
-
-  console.log(top[0][1] === whiteSide);
 
   // Check if each edge piece on the top is white
   if (top[0][1] !== whiteSide) return false;
@@ -339,4 +337,6 @@ export function whiteCross(cube: Cube) {
 
     if (sequence.length) return sequence;
   }
+
+  return [];
 }

@@ -1,17 +1,61 @@
 import properties, { Cube, Side } from "../../properties";
+import f2l from "../algs/cfop/f2l";
+import whiteCorners, { whiteCornersSolved } from "../algs/cfop/whiteCorners";
+import { whiteCross, whiteCrossSolved } from "../algs/cfop/whiteCross";
 import simulateTurn from "./simulateTurn";
-import { whiteCross, whiteCrossSolved } from "./whiteCross";
 
 export default async function solve(cube: Cube) {
   const sequence = [] as any;
 
-  let cubeCopy = cube;
-  while (!whiteCrossSolved(cubeCopy)) {
-    const s = whiteCross(cubeCopy);
-    if (!s) break;
+  const oneAtATime = false;
 
-    sequence.push(...s);
-    cubeCopy = await simulateTurn(cubeCopy, s);
+  let cubeCopy = cube;
+  if (!oneAtATime) {
+    while (!whiteCrossSolved(cubeCopy)) {
+      const s = whiteCross(cubeCopy);
+      if (!s.length) break;
+
+      sequence.push(...s);
+      cubeCopy = await simulateTurn(cubeCopy, s);
+    }
+
+    while (!whiteCornersSolved(cubeCopy)) {
+      const s = whiteCorners(cubeCopy);
+      if (!s.length) break;
+
+      sequence.push(...s);
+      cubeCopy = await simulateTurn(cubeCopy, s);
+    }
+
+    while (true) {
+      const s = f2l(cubeCopy);
+      if (!s.length) break;
+
+      sequence.push(...s);
+      cubeCopy = await simulateTurn(cubeCopy, s);
+    }
+  }
+
+  // One move at a time
+  else {
+    if (!whiteCrossSolved(cubeCopy)) {
+      const s = whiteCross(cubeCopy);
+      if (s.length) sequence.push(...s);
+    }
+
+    if (!whiteCornersSolved(cubeCopy)) {
+      const s = whiteCorners(cubeCopy);
+      if (s.length) sequence.push(...s);
+    } else {
+      const s = f2l(cubeCopy);
+
+      console.log(s);
+
+      if (s.length) sequence.push(...s);
+      cubeCopy = await simulateTurn(cubeCopy, s);
+    }
+
+    simulateTurn(cubeCopy, sequence);
   }
 
   // properties.animationSpeed = 300;

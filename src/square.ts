@@ -10,15 +10,16 @@ type Props = {
   size: number;
   i: number;
   j: number;
-  showText?: boolean;
 };
 
-export default function Square({ location, color, size, rotation, i, j, showText }: Props) {
+export default function Square({ location, color, size, rotation, i, j }: Props) {
   const mesh = new Mesh(new PlaneGeometry(size, size), new MeshBasicMaterial({ color }));
   mesh.position.set(location.x, location.y, location.z);
   mesh.rotation.set(rotation.x, rotation.y, rotation.z);
 
-  if (showText) {
+  let showText = false;
+
+  function addText() {
     const loader = new FontLoader();
 
     const text = "(" + i + " , " + j + ")";
@@ -36,6 +37,15 @@ export default function Square({ location, color, size, rotation, i, j, showText
       mesh.add(textMesh);
     });
   }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "t") {
+      showText = !showText;
+
+      if (showText) addText();
+      if (!showText) mesh.remove(mesh.children[0]);
+    }
+  });
 
   return { elements: [mesh] };
 }

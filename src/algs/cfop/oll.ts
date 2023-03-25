@@ -1,3 +1,11 @@
-import { f, fp, r, rp, u, up } from "../../helpers/getMoves";
+import { Cube } from "../../../properties";
+import { f, f2, fp, r, r2, rp, u, u2, up } from "../../helpers/getMoves";
 
-export const case1 = [f, r, u, rp, up, fp];
+// All of the OLL algorithms are found from
+// https://jperm.net/algs/oll
+
+const ollAlgorithms = {
+  1: [r, u2, r2, f, r, fp, u2, rp, f, r, fp],
+};
+
+export default function solveOLL(cube: Cube) {}
