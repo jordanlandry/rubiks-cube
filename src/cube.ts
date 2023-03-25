@@ -1,10 +1,14 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
 import properties, { INITIAL_CUBE_STATE } from "../properties";
+import { ollAlgorithms } from "./algs/cfop/oll";
 import Face from "./face";
 import scramble from "./functions/scramble";
 import solve from "./functions/solve";
 import turn from "./functions/turn";
+import { l2, m, m2, r2 } from "./helpers/getMoves";
+import getOLLStates from "./helpers/getOLLStates";
 import interpretMoves from "./helpers/interpretMoves";
+import reverseAlg from "./helpers/reverseAlg";
 import { sleep } from "./helpers/sleep";
 import { scene } from "./main";
 
@@ -58,6 +62,24 @@ export default function Cube() {
 
         await sleep(properties.animationSpeed);
       }
+    }
+
+    if (e.key === "o") {
+      const keys = Object.keys(ollAlgorithms) as any;
+      const lastKey = keys[keys.length - 1];
+
+      const solveSequence = [...l2(), ...m2(), ...r2(), ...getOLLStates(lastKey)];
+
+      for (let i = 0; i < solveSequence.length; i++) {
+        const { move, inverted } = solveSequence[i];
+        await turn(cubeState, move, inverted);
+
+        updateElements();
+
+        await sleep(properties.animationSpeed);
+      }
+
+      console.log("cubeState: " + JSON.stringify(cubeState));
     }
 
     if (e.key === "Enter") {

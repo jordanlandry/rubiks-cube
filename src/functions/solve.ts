@@ -1,5 +1,6 @@
 import properties, { Cube, Side } from "../../properties";
 import f2l from "../algs/cfop/f2l";
+import solveOLL, { ollSolved } from "../algs/cfop/oll";
 import whiteCorners, { whiteCornersSolved } from "../algs/cfop/whiteCorners";
 import { whiteCross, whiteCrossSolved } from "../algs/cfop/whiteCross";
 import simulateTurn from "./simulateTurn";
@@ -34,6 +35,19 @@ export default async function solve(cube: Cube) {
       sequence.push(...s);
       cubeCopy = await simulateTurn(cubeCopy, s);
     }
+
+    let count = 0;
+    while (!ollSolved(cubeCopy)) {
+      const s = solveOLL(cubeCopy, count);
+      if (!s.length) break;
+
+      sequence.push(...s);
+      cubeCopy = await simulateTurn(cubeCopy, s);
+
+      count++;
+
+      if (count > 10) break;
+    }
   }
 
   // One move at a time
@@ -49,16 +63,12 @@ export default async function solve(cube: Cube) {
     } else {
       const s = f2l(cubeCopy);
 
-      console.log(s);
-
       if (s.length) sequence.push(...s);
       cubeCopy = await simulateTurn(cubeCopy, s);
     }
 
     simulateTurn(cubeCopy, sequence);
   }
-
-  // properties.animationSpeed = 300;
 
   return sequence;
 }

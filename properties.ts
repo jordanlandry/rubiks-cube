@@ -21,7 +21,7 @@ const properties = {
 
   initialCameraPosition: { x: 0, y: 0, z: 7 },
 
-  animationSpeed: 25, // ms
+  animationSpeed: 5, // ms
 };
 
 // 3D array representing the cube state
@@ -65,7 +65,7 @@ export const INITIAL_CUBE_STATE = {
 
 export type Side = "bottom" | "top" | "front" | "right" | "left" | "back";
 
-export const validTurns = ["u", "d", "l", "r", "f", "b"] as const;
+export const validTurns = ["u", "d", "l", "r", "f", "b", "m"] as const;
 
 export type Turn = typeof validTurns[number];
 export type Move = {

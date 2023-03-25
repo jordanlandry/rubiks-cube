@@ -26,5 +26,9 @@ export const b = () => [{ move: "b" as Turn, inverted: false }];
 export const b2 = () => [{ move: "b" as Turn, inverted: false }, { move: "b", inverted: false }];
 export const bp = () => [{ move: "b" as Turn, inverted: true }];
 
+export const m = () => [{ move: "m" as Turn, inverted: false }];
+export const m2 = () => [{ move: "m" as Turn, inverted: false }, { move: "m", inverted: false }];
+export const mp = () => [{ move: "m" as Turn, inverted: true }];
+
 
 

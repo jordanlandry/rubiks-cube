@@ -21,6 +21,7 @@ export default async function turn(cube: Cube, turnType: Turn, inverted = false)
     d: inverted ? 1 : 3,
     f: inverted ? 3 : 1,
     b: inverted ? 3 : 1,
+    m: inverted ? 3 : 1,
   } as { [key in Turn]: number };
 
   const count = turnCounts[turnType];
@@ -109,6 +110,22 @@ export default async function turn(cube: Cube, turnType: Turn, inverted = false)
 
         // Rotate the back side
         cube.back = rotateMatrix(cube.back, false);
+      });
+    }
+
+    // MIDDLE MOVE
+    if (turnType === "m") {
+      const tempSide = deepCopy(cube.front);
+
+      const j = Math.floor(properties.dimensions / 2);
+
+      d.forEach((i) => {
+        const iRel = properties.dimensions - 1 - i;
+
+        cube.front[j][i] = top[j][i];
+        cube.top[j][i] = back[j][iRel];
+        cube.back[j][iRel] = bottom[j][i];
+        cube.bottom[j][i] = tempSide[j][i];
       });
     }
   }
