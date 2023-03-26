@@ -21,7 +21,7 @@ const properties = {
 
   initialCameraPosition: { x: 0, y: 0, z: 7 },
 
-  animationSpeed: 5, // ms
+  animationSpeed: 500, // ms
 };
 
 // 3D array representing the cube state

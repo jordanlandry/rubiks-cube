@@ -1,11 +1,12 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
-import properties, { INITIAL_CUBE_STATE } from "../properties";
+import properties, { INITIAL_CUBE_STATE, Turn } from "../properties";
 import { ollAlgorithms } from "./algs/cfop/oll";
 import Face from "./face";
+import handleAnimateTurn from "./functions/handleAnimation";
 import scramble from "./functions/scramble";
 import solve from "./functions/solve";
 import turn from "./functions/turn";
-import { l2, m, m2, r2 } from "./helpers/getMoves";
+import { l2, m, m2, r, r2, u } from "./helpers/getMoves";
 import getOLLStates from "./helpers/getOLLStates";
 import interpretMoves from "./helpers/interpretMoves";
 import reverseAlg from "./helpers/reverseAlg";
@@ -52,10 +53,12 @@ export default function Cube() {
 
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === " ") {
-      const scrambleSequence = scramble();
+      // const scrambleSequence = scramble(1);
+      const scrambleSequence = u();
 
       for (let i = 0; i < scrambleSequence.length; i++) {
         const { move, inverted } = scrambleSequence[i];
+        await handleAnimateTurn(faces, move, inverted);
         await turn(cubeState, move, inverted);
 
         updateElements();
@@ -102,5 +105,5 @@ export default function Cube() {
 
   const faceElements = { elements: faces };
 
-  return { elements: [innerCube, faceElements] };
+  return { elements: [faceElements] };
 }

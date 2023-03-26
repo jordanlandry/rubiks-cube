@@ -1,6 +1,7 @@
 import properties, { Cube, Side } from "../../properties";
 import f2l from "../algs/cfop/f2l";
 import solveOLL, { ollSolved } from "../algs/cfop/oll";
+import solvePLL, { pllSolved } from "../algs/cfop/pll";
 import whiteCorners, { whiteCornersSolved } from "../algs/cfop/whiteCorners";
 import { whiteCross, whiteCrossSolved } from "../algs/cfop/whiteCross";
 import simulateTurn from "./simulateTurn";
@@ -46,8 +47,17 @@ export default async function solve(cube: Cube) {
 
       count++;
 
+      // This is temporary until I add every OLL case just to prevent an infinite loop for now
       if (count > 10) break;
     }
+
+    // properties.animationSpeed = 0;
+    // while (!pllSolved(cubeCopy)) {
+    const s = await solvePLL(cubeCopy);
+
+    sequence.push(...s);
+    cubeCopy = await simulateTurn(cubeCopy, s);
+    // }
   }
 
   // One move at a time
