@@ -1,23 +1,19 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
-import properties, { INITIAL_CUBE_STATE } from "../properties";
-import { ollAlgorithms } from "./algs/cfop/oll";
+import { Mesh } from "three";
+import { INITIAL_CUBE_STATE } from "../properties";
 import Face from "./face";
 import handleAnimateTurn from "./functions/handleAnimation";
 import scramble from "./functions/scramble";
 import solve from "./functions/solve";
 import turn from "./functions/turn";
-import { l2, m2, r2 } from "./helpers/getMoves";
-import getOLLStates from "./helpers/getOLLStates";
 import interpretMoves from "./helpers/interpretMoves";
-import { sleep } from "./helpers/sleep";
 import { scene } from "./main";
 
 export default function Cube() {
-  const { totalSize, borderSize } = properties;
-  const innerCubeSize = totalSize + borderSize - 0.01; // Makes the cube slightly smaller than the total size
+  // const { totalSize, borderSize } = properties;
+  // const innerCubeSize = totalSize + borderSize - 0.01; // Makes the cube slightly smaller than the total size
 
   // Create a black cube as the inner cube
-  const innerCube = new Mesh(new BoxGeometry(innerCubeSize, innerCubeSize, innerCubeSize), new MeshBasicMaterial({ color: 0x000000 }));
+  // const innerCube = new Mesh(new BoxGeometry(innerCubeSize, innerCubeSize, innerCubeSize), new MeshBasicMaterial({ color: 0x000000 }));
 
   let cubeState = INITIAL_CUBE_STATE;
 
@@ -53,7 +49,6 @@ export default function Cube() {
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === " ") {
       const scrambleSequence = scramble();
-      // const scrambleSequence = [...b()];
 
       for (let i = 0; i < scrambleSequence.length; i++) {
         const { move, inverted } = scrambleSequence[i];
@@ -61,27 +56,7 @@ export default function Cube() {
         await turn(cubeState, move, inverted);
 
         updateElements();
-
-        // await sleep(properties.animationSpeed);
       }
-    }
-
-    if (e.key === "o") {
-      const keys = Object.keys(ollAlgorithms) as any;
-      const lastKey = keys[keys.length - 1];
-
-      const solveSequence = [...l2(), ...m2(), ...r2(), ...getOLLStates(lastKey)];
-
-      for (let i = 0; i < solveSequence.length; i++) {
-        const { move, inverted } = solveSequence[i];
-        await turn(cubeState, move, inverted);
-
-        updateElements();
-
-        await sleep(properties.animationSpeed);
-      }
-
-      console.log("cubeState: " + JSON.stringify(cubeState));
     }
 
     if (e.key === "Enter") {
@@ -98,8 +73,6 @@ export default function Cube() {
         await turn(cubeState, move, inverted);
 
         updateElements();
-
-        // await sleep(properties.animationSpeed);
       }
     }
   }

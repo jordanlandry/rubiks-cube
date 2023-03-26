@@ -1,9 +1,153 @@
 // Picture this as if white was on the top
 // Since the position of the cube can be messed up during each step, we need to make sure that the cube is in the updated state
 
-import properties, { colorToSideMap, Cube } from "../../../properties";
+import properties, { colorToSideMap, Cube, Side } from "../../../properties";
 import { b, b2, bp, d, d2, dp, f, f2, fp, l, l2, lp, r, r2, rp, u, u2, up } from "../../helpers/getMoves";
-import { getCorrespondingEdgePiece, isCorner } from "../../functions/solve";
+import { isCorner } from "../../functions/solve";
+
+// This function takes an edge piece position, and returns the other color on the other side of that piece
+export function getCorrespondingEdgePiece(cube: Cube, i: number, j: number, side: Side) {
+  // All of these values were found by adding the i and j to each side
+
+  const result = {
+    color: -1,
+    side: "" as Side,
+  };
+
+  if (side === "bottom") {
+    if (i === 0 && j === 1) {
+      result.color = cube.left[1][0];
+      result.side = "left";
+    }
+
+    if (i === 1 && j === 2) {
+      result.color = cube.front[1][0];
+      result.side = "front";
+    }
+
+    if (i === 2 && j === 1) {
+      result.color = cube.right[1][0];
+      result.side = "right";
+    }
+
+    if (i === 1 && j === 0) {
+      result.color = cube.back[1][0];
+      result.side = "back";
+    }
+  }
+
+  if (side === "top") {
+    if (i === 1 && j === 0) {
+      result.color = cube.front[1][2];
+      result.side = "front";
+    }
+
+    if (i === 2 && j === 1) {
+      result.color = cube.right[1][2];
+      result.side = "right";
+    }
+
+    if (i === 1 && j === 2) {
+      result.color = cube.back[1][2];
+      result.side = "back";
+    }
+
+    if (i === 0 && j === 1) {
+      result.color = cube.left[1][2];
+      result.side = "left";
+    }
+  }
+
+  if (side === "left") {
+    if (i === 0 && j === 1) {
+      result.color = cube.back[2][1];
+      result.side = "back";
+    }
+
+    if (i === 1 && j === 0) {
+      result.color = cube.bottom[0][1];
+      result.side = "bottom";
+    }
+
+    if (i === 2 && j === 1) {
+      result.color = cube.front[0][1];
+      result.side = "front";
+    }
+
+    if (i === 1 && j === 2) {
+      result.color = cube.top[0][1];
+      result.side = "top";
+    }
+  }
+
+  if (side === "right") {
+    if (i === 0 && j === 1) {
+      result.color = cube.front[2][1];
+      result.side = "front";
+    }
+
+    if (i === 1 && j === 0) {
+      result.color = cube.bottom[2][1];
+      result.side = "bottom";
+    }
+
+    if (i === 2 && j === 1) {
+      result.color = cube.back[0][1];
+      result.side = "back";
+    }
+
+    if (i === 1 && j === 2) {
+      result.color = cube.top[2][1];
+      result.side = "top";
+    }
+  }
+
+  if (side === "front") {
+    if (i === 0 && j === 1) {
+      result.color = cube.left[2][1];
+      result.side = "left";
+    }
+
+    if (i === 1 && j === 0) {
+      result.color = cube.bottom[1][2];
+      result.side = "bottom";
+    }
+
+    if (i === 2 && j === 1) {
+      result.color = cube.right[0][1];
+      result.side = "right";
+    }
+
+    if (i === 1 && j === 2) {
+      result.color = cube.top[1][0];
+      result.side = "top";
+    }
+  }
+
+  if (side === "back") {
+    if (i === 0 && j === 1) {
+      result.color = cube.right[2][1];
+      result.side = "right";
+    }
+
+    if (i === 1 && j === 0) {
+      result.color = cube.bottom[1][0];
+      result.side = "bottom";
+    }
+
+    if (i === 2 && j === 1) {
+      result.color = cube.left[0][1];
+      result.side = "left";
+    }
+
+    if (i === 1 && j === 2) {
+      result.color = cube.top[1][2];
+      result.side = "top";
+    }
+  }
+
+  return result;
+}
 
 export function whiteCrossSolved(cube: Cube) {
   // Check if the white cross is solved

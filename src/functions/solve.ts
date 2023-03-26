@@ -9,79 +9,35 @@ import simulateTurn from "./simulateTurn";
 
 export default async function solve(cube: Cube) {
   const sequence = [] as any;
-
-  const oneAtATime = false;
-
   let cubeCopy = cube;
-  if (!oneAtATime) {
-    while (!whiteCrossSolved(cubeCopy)) {
-      const s = whiteCross(cubeCopy);
-      if (!s.length) break;
 
-      sequence.push(...s);
-      cubeCopy = await simulateTurn(cubeCopy, s);
-    }
+  cubeCopy = await doTask(cubeCopy, whiteCrossSolved, whiteCross, sequence, "White Cross");
+  cubeCopy = await doTask(cubeCopy, whiteCornersSolved, whiteCorners, sequence, "White Corners");
+  cubeCopy = await doTask(cubeCopy, () => false, f2l, sequence, "F2L");
+  cubeCopy = await doTask(cubeCopy, ollSolved, solveOLL, sequence, "OLL");
+  cubeCopy = await doTask(cubeCopy, pllSolved, solvePLL, sequence, "PLL");
+  cubeCopy = await doTask(cubeCopy, isSolved, () => [u], sequence, "Last Layer");
 
-    while (!whiteCornersSolved(cubeCopy)) {
-      const s = whiteCorners(cubeCopy);
-      if (!s.length) break;
+  return sequence;
+}
 
-      sequence.push(...s);
-      cubeCopy = await simulateTurn(cubeCopy, s);
-    }
-
-    while (true) {
-      const s = f2l(cubeCopy);
-      if (!s.length) break;
-
-      sequence.push(...s);
-      cubeCopy = await simulateTurn(cubeCopy, s);
-    }
-
-    let count = 0;
-    while (!ollSolved(cubeCopy)) {
-      const s = solveOLL(cubeCopy, count);
-      if (!s.length) break;
-
-      sequence.push(...s);
-      cubeCopy = await simulateTurn(cubeCopy, s);
-
-      count++;
-
-      // This is temporary until I add every OLL case just to prevent an infinite loop for now
-      if (count > 10) break;
-    }
-
-    count = 0;
-    // properties.animationSpeed = 0;
-    while (!pllSolved(cubeCopy)) {
-      const s = await solvePLL(cubeCopy);
-
-      sequence.push(...s);
-      cubeCopy = await simulateTurn(cubeCopy, s);
-
-      count++;
-
-      if (count > 10) break;
-    }
-  }
+async function doTask(cube: Cube, solveState: Function, task: Function, sequence: any[], name?: string) {
+  console.log("Solving: " + name);
 
   let count = 0;
-  // Finish the solve by turning the top layer
+  while (!solveState(cube)) {
+    const s = task(cube, count);
+    if (!s.length) break;
 
-  while (!isSolved(cubeCopy)) {
-    // Turn the top layer
-    const s = [u];
     sequence.push(...s);
-
-    cubeCopy = await simulateTurn(cubeCopy, s);
+    cube = await simulateTurn(cube, s);
 
     count++;
 
     if (count > 10) break;
   }
 
-  return sequence;
+  return cube;
 }
 
 function isSolved(cube: Cube) {
@@ -109,148 +65,4 @@ export function isCorner(i: number, j: number) {
   if (i === dimensions - 1 && j === dimensions - 1) return true;
 
   return false;
-}
-
-// This function takes an edge piece position, and returns the other color on the other side of that piece
-export function getCorrespondingEdgePiece(cube: Cube, i: number, j: number, side: Side) {
-  // All of these values were found by adding the i and j to each side
-
-  const result = {
-    color: -1,
-    side: "" as Side,
-  };
-
-  if (side === "bottom") {
-    if (i === 0 && j === 1) {
-      result.color = cube.left[1][0];
-      result.side = "left";
-    }
-
-    if (i === 1 && j === 2) {
-      result.color = cube.front[1][0];
-      result.side = "front";
-    }
-
-    if (i === 2 && j === 1) {
-      result.color = cube.right[1][0];
-      result.side = "right";
-    }
-
-    if (i === 1 && j === 0) {
-      result.color = cube.back[1][0];
-      result.side = "back";
-    }
-  }
-
-  if (side === "top") {
-    if (i === 1 && j === 0) {
-      result.color = cube.front[1][2];
-      result.side = "front";
-    }
-
-    if (i === 2 && j === 1) {
-      result.color = cube.right[1][2];
-      result.side = "right";
-    }
-
-    if (i === 1 && j === 2) {
-      result.color = cube.back[1][2];
-      result.side = "back";
-    }
-
-    if (i === 0 && j === 1) {
-      result.color = cube.left[1][2];
-      result.side = "left";
-    }
-  }
-
-  if (side === "left") {
-    if (i === 0 && j === 1) {
-      result.color = cube.back[2][1];
-      result.side = "back";
-    }
-
-    if (i === 1 && j === 0) {
-      result.color = cube.bottom[0][1];
-      result.side = "bottom";
-    }
-
-    if (i === 2 && j === 1) {
-      result.color = cube.front[0][1];
-      result.side = "front";
-    }
-
-    if (i === 1 && j === 2) {
-      result.color = cube.top[0][1];
-      result.side = "top";
-    }
-  }
-
-  if (side === "right") {
-    if (i === 0 && j === 1) {
-      result.color = cube.front[2][1];
-      result.side = "front";
-    }
-
-    if (i === 1 && j === 0) {
-      result.color = cube.bottom[2][1];
-      result.side = "bottom";
-    }
-
-    if (i === 2 && j === 1) {
-      result.color = cube.back[0][1];
-      result.side = "back";
-    }
-
-    if (i === 1 && j === 2) {
-      result.color = cube.top[2][1];
-      result.side = "top";
-    }
-  }
-
-  if (side === "front") {
-    if (i === 0 && j === 1) {
-      result.color = cube.left[2][1];
-      result.side = "left";
-    }
-
-    if (i === 1 && j === 0) {
-      result.color = cube.bottom[1][2];
-      result.side = "bottom";
-    }
-
-    if (i === 2 && j === 1) {
-      result.color = cube.right[0][1];
-      result.side = "right";
-    }
-
-    if (i === 1 && j === 2) {
-      result.color = cube.top[1][0];
-      result.side = "top";
-    }
-  }
-
-  if (side === "back") {
-    if (i === 0 && j === 1) {
-      result.color = cube.right[2][1];
-      result.side = "right";
-    }
-
-    if (i === 1 && j === 0) {
-      result.color = cube.bottom[1][0];
-      result.side = "bottom";
-    }
-
-    if (i === 2 && j === 1) {
-      result.color = cube.left[0][1];
-      result.side = "left";
-    }
-
-    if (i === 1 && j === 2) {
-      result.color = cube.top[1][2];
-      result.side = "top";
-    }
-  }
-
-  return result;
 }

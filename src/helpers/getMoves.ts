@@ -30,5 +30,13 @@ export const m = () => [{ move: "m" as Turn, inverted: false }];
 export const m2 = () => [{ move: "m" as Turn, inverted: false }, { move: "m", inverted: false }];
 export const mp = () => [{ move: "m" as Turn, inverted: true }];
 
+export const rw = () => [...r(), ...mp()];
+export const rw2 = () => [...r2(), ...m2()];
+export const rwp = () => [...rp(), ...m()];
+
+export const lw = () => [...l(), ...m()];
+export const lw2 = () => [...l2(), ...m2()];
+export const lwp = () => [...lp(), ...mp()];
+
 
 
