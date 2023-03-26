@@ -11,7 +11,8 @@ const properties = {
     { name: "blue", hex: 0x0000ff },
   ],
 
-  canvasColor: 0xaacccc, // Background color
+  // canvasColor: 0xaacccc, // Background color
+  canvasColor: 0, // Background color
 
   dimensions: 3,
   totalSize: 3,
@@ -21,7 +22,7 @@ const properties = {
 
   initialCameraPosition: { x: 0, y: 0, z: 7 },
 
-  animationSpeed: 25, // ms
+  animationSpeed: 150, // ms
 };
 
 // 3D array representing the cube state

@@ -53,6 +53,7 @@ export default function Cube() {
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === " ") {
       const scrambleSequence = scramble();
+      // const scrambleSequence = [...b()];
 
       for (let i = 0; i < scrambleSequence.length; i++) {
         const { move, inverted } = scrambleSequence[i];
@@ -61,7 +62,7 @@ export default function Cube() {
 
         updateElements();
 
-        await sleep(properties.animationSpeed);
+        // await sleep(properties.animationSpeed);
       }
     }
 
@@ -92,11 +93,13 @@ export default function Cube() {
 
       for (let i = 0; i < solveSequence.length; i++) {
         const { move, inverted } = solveSequence[i];
+
+        await handleAnimateTurn(faces, move, inverted);
         await turn(cubeState, move, inverted);
 
         updateElements();
 
-        await sleep(properties.animationSpeed);
+        // await sleep(properties.animationSpeed);
       }
     }
   }
@@ -107,5 +110,5 @@ export default function Cube() {
 
   const faceElements = { elements: faces };
 
-  return { elements: [innerCube, faceElements] };
+  return { elements: [faceElements] };
 }
