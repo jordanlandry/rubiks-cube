@@ -4,6 +4,7 @@ import solveOLL, { ollSolved } from "../algs/cfop/oll";
 import solvePLL, { pllSolved } from "../algs/cfop/pll";
 import whiteCorners, { whiteCornersSolved } from "../algs/cfop/whiteCorners";
 import { whiteCross, whiteCrossSolved } from "../algs/cfop/whiteCross";
+import { u } from "../helpers/getMoves";
 import simulateTurn from "./simulateTurn";
 
 export default async function solve(cube: Cube) {
@@ -51,36 +52,49 @@ export default async function solve(cube: Cube) {
       if (count > 10) break;
     }
 
+    count = 0;
     // properties.animationSpeed = 0;
-    // while (!pllSolved(cubeCopy)) {
-    const s = await solvePLL(cubeCopy);
+    while (!pllSolved(cubeCopy)) {
+      const s = await solvePLL(cubeCopy);
 
-    sequence.push(...s);
-    cubeCopy = await simulateTurn(cubeCopy, s);
-    // }
+      sequence.push(...s);
+      cubeCopy = await simulateTurn(cubeCopy, s);
+
+      count++;
+
+      if (count > 10) break;
+    }
   }
 
-  // One move at a time
-  else {
-    if (!whiteCrossSolved(cubeCopy)) {
-      const s = whiteCross(cubeCopy);
-      if (s.length) sequence.push(...s);
-    }
+  let count = 0;
+  // Finish the solve by turning the top layer
 
-    if (!whiteCornersSolved(cubeCopy)) {
-      const s = whiteCorners(cubeCopy);
-      if (s.length) sequence.push(...s);
-    } else {
-      const s = f2l(cubeCopy);
+  while (!isSolved(cubeCopy)) {
+    // Turn the top layer
+    const s = [u];
+    sequence.push(...s);
 
-      if (s.length) sequence.push(...s);
-      cubeCopy = await simulateTurn(cubeCopy, s);
-    }
+    cubeCopy = await simulateTurn(cubeCopy, s);
 
-    simulateTurn(cubeCopy, sequence);
+    count++;
+
+    if (count > 10) break;
   }
 
   return sequence;
+}
+
+function isSolved(cube: Cube) {
+  const sides = ["front", "back", "left", "right", "top", "bottom"] as Side[];
+  for (const side of sides) {
+    for (let i = 0; i < properties.dimensions; i++) {
+      for (let j = 0; j < properties.dimensions; j++) {
+        if (cube[side][i][j] !== cube[side][1][1]) return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 // Things to note

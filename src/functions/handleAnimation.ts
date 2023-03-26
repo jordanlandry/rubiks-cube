@@ -25,13 +25,23 @@ export default async function handleAnimateTurn(faces: any, turnType: Turn, inve
     // }
 
     // meshes.push(faces[2].children[0]);
-    newMesh.add(faces[2].children[0].children[2]);
-    newMesh.add(faces[2].children[0].children[4]);
-    newMesh.add(faces[2].children[0].children[6]);
-
+    // newMesh.add(faces[2].children[0].children[2]);
+    // newMesh.add(faces[2].children[0].children[4]);
+    // newMesh.add(faces[2].children[0].children[6]);
     // newMesh.add(faces[3].children[0].children[2]);
-    // newMesh.add(faces[3].children[0].children[4]);
-    // newMesh.add(faces[3].children[0].children[6]);
+
+    // faces[3].children[0].children[2].rotation.z = faces[3].children[0].rotation.z;
+    // faces[3].children[0].children[2].rotation.x = faces[3].children[0].rotation.x;
+    // faces[3].children[0].children[2].rotation.y = faces[3].children[0].rotation.y;
+
+
+    // faces[3].children[0].children[4].rotation.z = faces[3].children[0].rotation.z;
+    // faces[3].children[0].children[6].rotateZ(faces[3].children[0].rotation.z);
+
+    // console.log(faces[3].children[0]);
+
+
+
 
     // newMesh.add(faces[2].children[1])
     // newMesh.add(faces[2].children[2])

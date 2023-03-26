@@ -1,15 +1,14 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
-import properties, { INITIAL_CUBE_STATE, Turn } from "../properties";
+import properties, { INITIAL_CUBE_STATE } from "../properties";
 import { ollAlgorithms } from "./algs/cfop/oll";
 import Face from "./face";
 import handleAnimateTurn from "./functions/handleAnimation";
 import scramble from "./functions/scramble";
 import solve from "./functions/solve";
 import turn from "./functions/turn";
-import { l2, m, m2, r, r2, u } from "./helpers/getMoves";
+import { l2, m2, r2 } from "./helpers/getMoves";
 import getOLLStates from "./helpers/getOLLStates";
 import interpretMoves from "./helpers/interpretMoves";
-import reverseAlg from "./helpers/reverseAlg";
 import { sleep } from "./helpers/sleep";
 import { scene } from "./main";
 
@@ -53,8 +52,7 @@ export default function Cube() {
 
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === " ") {
-      // const scrambleSequence = scramble(1);
-      const scrambleSequence = u();
+      const scrambleSequence = scramble();
 
       for (let i = 0; i < scrambleSequence.length; i++) {
         const { move, inverted } = scrambleSequence[i];
@@ -86,7 +84,11 @@ export default function Cube() {
     }
 
     if (e.key === "Enter") {
+      const startTime = Date.now();
       const solveSequence = interpretMoves(await solve(cubeState));
+
+      console.log("Solve time: " + (Date.now() - startTime) + "ms");
+      console.log("Solve length: " + solveSequence.length + " moves");
 
       for (let i = 0; i < solveSequence.length; i++) {
         const { move, inverted } = solveSequence[i];
@@ -105,5 +107,5 @@ export default function Cube() {
 
   const faceElements = { elements: faces };
 
-  return { elements: [faceElements] };
+  return { elements: [innerCube, faceElements] };
 }
