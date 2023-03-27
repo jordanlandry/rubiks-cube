@@ -1,5 +1,5 @@
 import { Mesh } from "three";
-import { INITIAL_CUBE_STATE } from "../properties";
+import properties, { INITIAL_CUBE_STATE } from "../properties";
 import Face from "./face";
 import handleAnimateTurn from "./functions/handleAnimation";
 import scramble from "./functions/scramble";
@@ -46,6 +46,37 @@ export default function Cube() {
     if (!firstTime) scene.add(...faces);
   }
 
+  let textElement: HTMLDivElement | null = null;
+  let timeout: null | ReturnType<typeof setTimeout> = null;
+  function addText(text: string, clearAfterMs = 1000) {
+    const app = document.getElementById("app")!;
+
+    if (timeout) clearTimeout(timeout);
+    if (textElement) {
+      textElement.innerHTML = text;
+      app.removeChild(textElement);
+    }
+
+    textElement = document.createElement("div");
+    textElement.style.position = "absolute";
+    textElement.style.top = "50px";
+    textElement.style.left = "50%";
+    textElement.style.transform = "translateX(-50%)";
+    textElement.style.fontSize = "2rem";
+    textElement.style.color = "white";
+    textElement.style.textAlign = "center";
+    textElement.style.zIndex = "100";
+    textElement.style.userSelect = "none";
+    textElement.innerHTML = text;
+
+    app.appendChild(textElement);
+
+    timeout = setTimeout(() => {
+      app.removeChild(textElement!);
+      textElement = null;
+    }, clearAfterMs);
+  }
+
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === " ") {
       const scrambleSequence = scramble();
@@ -74,6 +105,27 @@ export default function Cube() {
 
         updateElements();
       }
+    }
+
+    // Changing the animation speed
+    if (e.key === "ArrowUp") {
+      if (e.ctrlKey) properties.animationSpeed += 10;
+      else properties.animationSpeed += 5;
+
+      if (properties.animationSpeed > 1000) properties.animationSpeed = 1000;
+      if (properties.animationSpeed === 6) properties.animationSpeed = 5; // If it's 6, it's because it was 1 and we added 5 so we need to set it to 5
+      if (properties.animationSpeed === 11) properties.animationSpeed = 10;
+
+      addText("Animation time: " + properties.animationSpeed + "ms");
+    }
+
+    if (e.key === "ArrowDown") {
+      if (e.ctrlKey) properties.animationSpeed -= 10;
+      else properties.animationSpeed -= 5;
+
+      if (properties.animationSpeed <= 0) properties.animationSpeed = 1;
+
+      addText("Animation time: " + properties.animationSpeed + "ms");
     }
   }
 
