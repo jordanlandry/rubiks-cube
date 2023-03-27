@@ -65,7 +65,6 @@ export const INITIAL_CUBE_STATE = {
 } as Cube;
 
 export type Side = "bottom" | "top" | "front" | "right" | "left" | "back";
-
 export const validTurns = ["u", "d", "l", "r", "f", "b", "m"] as const;
 
 export type Turn = typeof validTurns[number];

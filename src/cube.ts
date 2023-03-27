@@ -1,11 +1,16 @@
 import { Mesh } from "three";
 import properties, { INITIAL_CUBE_STATE } from "../properties";
+import { pllAlgorithms } from "./algs/cfop/pll";
 import Face from "./face";
-import handleAnimateTurn from "./functions/handleAnimation";
+import turnSequence from "./functions/makeTurn";
 import scramble from "./functions/scramble";
 import solve from "./functions/solve";
 import turn from "./functions/turn";
+import { getColorIndex } from "./helpers/getColorIndex";
+import { l, l2, m, m2, r, r2, u, u2 } from "./helpers/getMoves";
 import interpretMoves from "./helpers/interpretMoves";
+import reverseAlg from "./helpers/reverseAlg";
+import { sleep } from "./helpers/sleep";
 import { scene } from "./main";
 
 export default function Cube() {
@@ -48,7 +53,7 @@ export default function Cube() {
 
   let textElement: HTMLDivElement | null = null;
   let timeout: null | ReturnType<typeof setTimeout> = null;
-  function addText(text: string, clearAfterMs = 1000) {
+  function addText(text: string, clearAfterMs = 2000) {
     const app = document.getElementById("app")!;
 
     if (timeout) clearTimeout(timeout);
@@ -77,34 +82,123 @@ export default function Cube() {
     }, clearAfterMs);
   }
 
+  const turnState = {
+    scrambling: false,
+    solving: false,
+    solved: true,
+  };
+
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === " ") {
+      if (turnState.scrambling || turnState.solving) return;
+
+      turnState.scrambling = true;
+      turnState.solved = false;
+
       const scrambleSequence = scramble();
 
-      for (let i = 0; i < scrambleSequence.length; i++) {
-        const { move, inverted } = scrambleSequence[i];
-        await handleAnimateTurn(faces, move, inverted);
-        await turn(cubeState, move, inverted);
-
-        updateElements();
+      // Make sure white ends up on top
+      const yellow = getColorIndex("yellow");
+      if (cubeState.top[1][1] === yellow) {
+        scrambleSequence.push(l()[0]);
+        scrambleSequence.push(l()[0]);
+        scrambleSequence.push(m()[0]);
+        scrambleSequence.push(m()[0]);
+        scrambleSequence.push(r()[0]);
+        scrambleSequence.push(r()[0]);
       }
+
+      addText("Scrambling...");
+      await turnSequence({ cubeState, moves: scrambleSequence, doAnimation: true, meshes: faces, callback: updateElements });
+      turnState.scrambling = false;
     }
 
     if (e.key === "Enter") {
+      if (turnState.solving) {
+        addText("Already solving");
+        return;
+      }
+
+      if (turnState.solved) {
+        addText("Already solved");
+        return;
+      }
+
+      if (turnState.scrambling) {
+        addText("Cannot solve while scrambling");
+        return;
+      }
+
+      turnState.solving = true;
+
+      addText("Solving...");
+
       const startTime = Date.now();
       const solveSequence = interpretMoves(await solve(cubeState));
 
       console.log("Solve time: " + (Date.now() - startTime) + "ms");
       console.log("Solve length: " + solveSequence.length + " moves");
 
-      for (let i = 0; i < solveSequence.length; i++) {
-        const { move, inverted } = solveSequence[i];
+      await turnSequence({ cubeState, moves: solveSequence, doAnimation: true, meshes: faces, callback: updateElements });
 
-        await handleAnimateTurn(faces, move, inverted);
-        await turn(cubeState, move, inverted);
+      turnState.solving = false;
+      turnState.solved = true;
+    }
 
-        updateElements();
+    // Get the PLL cube states for each algorithm (for debugging)
+    if (e.key === "p") {
+      const cubeStates = [] as any;
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 2; j++) {
+          turnSequence({ cubeState, moves: [...r()], doAnimation: false, meshes: faces, callback: updateElements });
+          turnSequence({ cubeState, moves: [...m()], doAnimation: false, meshes: faces, callback: updateElements });
+          turnSequence({ cubeState, moves: [...l()], doAnimation: false, meshes: faces, callback: updateElements });
+        }
+
+        for (let j = 0; j < i; j++) turnSequence({ cubeState, moves: [...u()], doAnimation: false, meshes: faces, callback: updateElements });
+
+        const a = reverseAlg(interpretMoves(pllAlgorithms[14].sequence));
+
+        await turnSequence({ cubeState, moves: a, doAnimation: true, meshes: faces, callback: updateElements });
+        cubeStates.push(JSON.stringify(cubeState));
+
+        cubeState = {
+          bottom: [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+          ],
+          top: [
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+          ],
+          front: [
+            [2, 2, 2],
+            [2, 2, 2],
+            [2, 2, 2],
+          ],
+          right: [
+            [3, 3, 3],
+            [3, 3, 3],
+            [3, 3, 3],
+          ],
+          left: [
+            [4, 4, 4],
+            [4, 4, 4],
+            [4, 4, 4],
+          ],
+          back: [
+            [5, 5, 5],
+            [5, 5, 5],
+            [5, 5, 5],
+          ],
+        };
+
+        await sleep(1000);
       }
+
+      console.log("cubeStates: [" + cubeStates + "]");
     }
 
     // Changing the animation speed

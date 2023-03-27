@@ -2,8 +2,10 @@ import { Cube, Side } from "../../../properties";
 import { getColorIndex } from "../../helpers/getColorIndex";
 import { b, bp, d, d2, dp, f, fp, l, lp, r, rp } from "../../helpers/getMoves";
 
+// Green-Orange, Green-Red, Red-Blue, Blue-Orange (all the edge pieces in the middle layer)
 type Edge = "go" | "gr" | "rb" | "bo";
 
+// The algorithms associated with each color, is the case when that color is on the top layer
 const algorithms = {
   go: {
     orange: [d, l, dp, lp, dp, fp, d, f],
@@ -89,41 +91,6 @@ function getEdge(cube: Cube, i: number, j: number, side: Side) {
 
   return "";
 }
-
-// Look for a specific edge, and return the side it is on and the position
-// function getEdgePosition(cube: Cube, edge: Edge) {
-//   const orange = getColorIndex("orange");
-//   const green = getColorIndex("green");
-//   const red = getColorIndex("red");
-//   const blue = getColorIndex("blue");
-
-//   const possiblePositions = [
-//     [0, 1],
-//     [2, 1],
-//     [1, 0],
-//   ];
-
-//   const possibleSides = Array.from<Side>(["left", "right", "back", "front"] as const);
-
-//   if (edge === "go") {
-//     if (cube.front[0][1] === green && cube.left[2][1] === orange) return { side: "front", position: [0, 1], state: "solved" };
-//     if (cube.front[0][1] === orange && cube.left[2][1] === green) return { side: "front", position: [0, 1], state: "flipped" };
-//     if (cube.front[1][0] === green && cube.bottom[1][2] === orange) return { side: "front", position: [1, 0], state: "left" };
-//     if (cube.front[1][0] === orange && cube.bottom[1][2] === green) return { side: "front", position: [1, 0], state: "right" };
-
-//   }
-
-//   return { side: "bottom", position: [0, 0] };
-// }
-
-// function isF2lPiece(cube: Cube, i: number, j: number, side: Side) {
-//   return (
-//     cube[side][i][j] === cube.front[1][1] ||
-//     cube[side][i][j] === cube.back[1][1] ||
-//     cube[side][i][j] === cube.left[1][1] ||
-//     cube[side][i][j] === cube.right[1][1]
-//   );
-// }
 
 export default function f2l(cube: Cube) {
   const green = getColorIndex("green");
@@ -262,6 +229,15 @@ export default function f2l(cube: Cube) {
   // there is an edge piece in the middle layer in the wrong place
   // If it's the ladder, we just need to move it to the bottom layer
   // Because when this function is called again, it will handle it as if it was case 1
+
+  // To do this we just need to run the algorithm for each side, as it will
+  // Replace that edge with one in the top layer, putting the unsolved one,
+  // In the top layer, which will be handled in the next iteration of this function
+
+  if (!edgeSolved(cube, "go")) return [...algorithms.go.green];
+  if (!edgeSolved(cube, "gr")) return [...algorithms.gr.green];
+  if (!edgeSolved(cube, "rb")) return [...algorithms.rb.red];
+  if (!edgeSolved(cube, "bo")) return [...algorithms.bo.blue];
 
   return [];
 }
