@@ -47,11 +47,13 @@ function playAudio() {
     (audio) => audio !== lastAudio
   );
 
+  const BASE = "../../audio";
+
   const randomAudio = audios[Math.floor(Math.random() * audios.length)];
 
   lastAudio = randomAudio;
 
-  audioLoader.load(`../../${randomAudio}`, function (buffer) {
+  audioLoader.load(`${BASE}/${randomAudio}`, function (buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(false);
     sound.setVolume(0.2);

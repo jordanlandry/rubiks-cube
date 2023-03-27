@@ -8,7 +8,6 @@ import { scene } from "../main";
 // spots to a new mesh, which will then be rotated around the center to animate the turn
 // To avoid overlapping, we need to remove the effected spots from the original face
 
-let lastAudio = "";
 export default async function handleAnimateTurn(faces: Mesh[], turnType: Turn, inverted: boolean) {
   const moveAnimationProperties = {
     u: {

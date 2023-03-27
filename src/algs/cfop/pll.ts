@@ -1,5 +1,5 @@
 import { Cube, Side } from "../../../properties";
-import { b, b2, bp, d, d2, dp, f, fp, l, l2, lp, m, m2, mp, r, r2, rp, u, u2, up } from "../../helpers/getMoves";
+import { b, b2, bp, d, dp, f, fp, l, l2, lp, m, m2, mp, r, r2, rp, u, u2, up } from "../../helpers/getMoves";
 
 // All algorithms were found on https://jperm.net/algs/pll and https://speedcubedb.com/a/3x3/PLL
 
