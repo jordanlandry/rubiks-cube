@@ -47,13 +47,14 @@ function playAudio() {
     (audio) => audio !== lastAudio
   );
 
-  const BASE = "rubiks-cube/../../audio";
-
+  const BASE = "./audio";
   const randomAudio = audios[Math.floor(Math.random() * audios.length)];
 
+  // Don't want to play the same audio twice in a row
   lastAudio = randomAudio;
+  const path = `${BASE}/${randomAudio}`;
 
-  audioLoader.load(`${BASE}/${randomAudio}`, function (buffer) {
+  audioLoader.load(path, function (buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(false);
     sound.setVolume(0.2);
