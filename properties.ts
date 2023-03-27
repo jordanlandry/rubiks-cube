@@ -3,12 +3,18 @@ const properties = {
   // As opposed to an object with the colors as keys since objects are technically unordered
   // The order will go : Down, Up, Front, Right, Left, Back
   colors: [
-    { name: "yellow", hex: 0xffff00 },
-    { name: "white", hex: 0xffffff },
-    { name: "green", hex: 0x00ff00 },
-    { name: "red", hex: 0xff0000 },
+    // { name: "yellow", hex: 0xffff00 },
+    // { name: "white", hex: 0xffffff },
+    // { name: "green", hex: 0x00ff00 },
+    // { name: "red", hex: 0xff0000 },
+    // { name: "orange", hex: 0xffa500 },
+    // { name: "blue", hex: 0x0000ff },
+    { name: "yellow", hex: 0xe5de00 },
+    { name: "white", hex: 0xeeeeee },
+    { name: "green", hex: 0x08f26e },
+    { name: "red", hex: 0xff4122 },
     { name: "orange", hex: 0xffa500 },
-    { name: "blue", hex: 0x0000ff },
+    { name: "blue", hex: 0x1c4966 },
   ],
 
   // canvasColor: 0xaacccc, // Background color

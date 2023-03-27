@@ -66,6 +66,7 @@ function run() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 
+    // console.log(animationLoop);
     animationLoop.forEach((func) => func());
   }
 

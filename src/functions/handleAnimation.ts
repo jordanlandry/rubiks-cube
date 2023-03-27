@@ -7,6 +7,8 @@ import { scene } from "../main";
 // We need to keep the rotation, so we need to duplicate the entire face and only add the effected
 // spots to a new mesh, which will then be rotated around the center to animate the turn
 // To avoid overlapping, we need to remove the effected spots from the original face
+
+let lastAudio = "";
 export default async function handleAnimateTurn(faces: Mesh[], turnType: Turn, inverted: boolean) {
   const moveAnimationProperties = {
     u: {
@@ -68,11 +70,11 @@ export default async function handleAnimateTurn(faces: Mesh[], turnType: Turn, i
     back: 5,
   } as { [key in Side]: number };
 
-  const newMesh = new Mesh();
+  let newMesh = new Mesh();
   const { indiciesToRemove } = moveAnimationProperties[turnType];
 
   Object.keys(indiciesToRemove).forEach((side) => {
-    const sideDuplicate = faces[sideMap[side as Side]].clone();
+    let sideDuplicate = faces[sideMap[side as Side]].clone();
 
     const meshesToRemove = indiciesToRemove[side as Side].map((index) => sideDuplicate.children[0].children[index]);
     meshesToRemove.forEach((mesh) => sideDuplicate.children[0].remove(mesh));
@@ -83,6 +85,8 @@ export default async function handleAnimateTurn(faces: Mesh[], turnType: Turn, i
     removeFromOriginal.forEach((mesh) => faces[sideMap[side as Side]].children[0].remove(mesh));
 
     newMesh.add(sideDuplicate);
+
+    sideDuplicate = null!;
   });
 
   const { axis, direction, rotatedSide } = moveAnimationProperties[turnType];
@@ -96,7 +100,8 @@ export default async function handleAnimateTurn(faces: Mesh[], turnType: Turn, i
   await animate(animationDirection, { mesh: newMesh, axis: axis });
   scene.remove(newMesh);
 
-  return;
+  // Delete the duplicated mesh and the new mesh
+  newMesh = null!;
 }
 
 async function animate(direction: 1 | -1, newMesh: { mesh: Mesh; axis: "x" | "y" | "z" }) {
