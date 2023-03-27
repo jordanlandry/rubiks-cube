@@ -47,7 +47,7 @@ function playAudio() {
     (audio) => audio !== lastAudio
   );
 
-  const BASE = "../../audio";
+  const BASE = "rubiks-cube/../../audio";
 
   const randomAudio = audios[Math.floor(Math.random() * audios.length)];
 
