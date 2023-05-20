@@ -16,12 +16,6 @@ export let audio = true;
 export let animate = true;
 
 export default function Cube() {
-  // const { totalSize, borderSize } = properties;
-  // const innerCubeSize = totalSize + borderSize - 0.01; // Makes the cube slightly smaller than the total size
-
-  // Create a black cube as the inner cube
-  // const innerCube = new Mesh(new BoxGeometry(innerCubeSize, innerCubeSize, innerCubeSize), new MeshBasicMaterial({ color: 0x000000 }));
-
   let cubeState = INITIAL_CUBE_STATE;
 
   // Create the faces of the cube
@@ -64,17 +58,10 @@ export default function Cube() {
       app.removeChild(textElement);
     }
 
+    // Text styles
     textElement = document.createElement("div");
-    textElement.style.position = "absolute";
-    textElement.style.top = "50px";
-    textElement.style.left = "50%";
-    textElement.style.transform = "translateX(-50%)";
-    textElement.style.fontSize = "2rem";
-    textElement.style.color = "white";
-    textElement.style.textAlign = "center";
-    textElement.style.zIndex = "100";
-    textElement.style.userSelect = "none";
-    textElement.innerHTML = text;
+    textElement.id = "absolute-text";
+    textElement.textContent = text;
 
     app.appendChild(textElement);
 
@@ -99,7 +86,7 @@ export default function Cube() {
 
       const scrambleSequence = scramble();
 
-      // Make sure white ends up on top
+      // Make sure white ends up on top because of how the algorithm works
       const yellow = getColorIndex("yellow");
       if (cubeState.top[1][1] === yellow) {
         scrambleSequence.push(l()[0]);

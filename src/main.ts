@@ -66,12 +66,21 @@ function run() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 
-    // console.log(animationLoop);
     animationLoop.forEach((func) => func());
   }
 
+  // Initialize the button onclicks
+  const showHelpMenuButton = document.getElementById("help-menu-button")!;
+  showHelpMenuButton.onclick = openHelpMenu;
+
+  const closeHelpMenuButton = document.getElementById("close-help-menu")!;
+  closeHelpMenuButton.onclick = closeHelpMenu;
+
   animate();
 }
+
+const openHelpMenu = () => (document.getElementById("help-menu")!.style.display = "block");
+const closeHelpMenu = () => (document.getElementById("help-menu")!.style.display = "none");
 
 function addElementsToScene(scene: any, elements: any, animationLoop: Func[]) {
   elements.forEach((element: any) => addToScene(scene, element, animationLoop));
